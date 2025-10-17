@@ -1,0 +1,172 @@
+// Core admin types
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'customer' | 'admin' | 'super_admin';
+  status: 'active' | 'inactive' | 'suspended';
+  createdAt: string;
+  lastLogin?: string;
+  profileImage?: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  subcategory?: string;
+  brand?: string;
+  sku: string;
+  status: 'active' | 'inactive' | 'draft';
+  stock: number;
+  images: string[];
+  tags: string[];
+  specifications?: Record<string, string>;
+  highlights?: string[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  user?: User;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  items: OrderItem[];
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  shippingAddress: Address;
+  billingAddress?: Address;
+  paymentMethod: string;
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  createdAt: string;
+  updatedAt: string;
+  trackingNumber?: string;
+  notes?: string;
+}
+
+export interface OrderItem {
+  id: string;
+  productId: string;
+  product?: Product;
+  quantity: number;
+  price: number;
+  total: number;
+}
+
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  product?: Product;
+  userId: string;
+  user?: User;
+  rating: number;
+  title: string;
+  comment: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  helpfulCount?: number;
+  verified?: boolean;
+}
+
+export interface InventoryItem {
+  id: string;
+  productId: string;
+  product?: Product;
+  stock: number;
+  reservedStock: number;
+  availableStock: number;
+  lowStockThreshold: number;
+  location: string;
+  lastUpdated: string;
+  movements: InventoryMovement[];
+}
+
+export interface InventoryMovement {
+  id: string;
+  type: 'in' | 'out' | 'adjustment';
+  quantity: number;
+  reason: string;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface DashboardStats {
+  users: {
+    total: number;
+    active: number;
+    newThisMonth: number;
+    growth: number;
+  };
+  orders: {
+    total: number;
+    pending: number;
+    processing: number;
+    completed: number;
+    revenue: number;
+    growth: number;
+  };
+  products: {
+    total: number;
+    active: number;
+    lowStock: number;
+    outOfStock: number;
+  };
+  reviews: {
+    total: number;
+    pending: number;
+    averageRating: number;
+    growth: number;
+  };
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface TableColumn<T> {
+  key: keyof T | string;
+  title: string;
+  sortable?: boolean;
+  render?: (value: any, record: T) => React.ReactNode;
+  width?: string;
+  align?: 'left' | 'center' | 'right';
+}
+
+export interface FilterOption {
+  label: string;
+  value: string;
+  count?: number;
+}
+
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
