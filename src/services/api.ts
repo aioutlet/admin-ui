@@ -252,22 +252,22 @@ export const inventoryApi = {
 // Dashboard API functions
 export const dashboardApi = {
   getStats: async () => {
-    const response = await adminApiClient.get<ApiResponse<any>>('/dashboard/stats');
+    const response = await adminApiClient.get<ApiResponse<any>>('/api/admin/dashboard/stats');
     return response.data;
   },
 
   getRecentOrders: async () => {
-    const response = await adminApiClient.get<ApiResponse<any[]>>('/dashboard/recent-orders');
+    const response = await adminApiClient.get<ApiResponse<any[]>>('/api/admin/dashboard/recent-orders');
     return response.data;
   },
 
   getRecentUsers: async () => {
-    const response = await adminApiClient.get<ApiResponse<any[]>>('/dashboard/recent-users');
+    const response = await adminApiClient.get<ApiResponse<any[]>>('/api/admin/dashboard/recent-users');
     return response.data;
   },
 
   getAnalytics: async (period: string) => {
-    const response = await adminApiClient.get<ApiResponse<any>>(`/dashboard/analytics?period=${period}`);
+    const response = await adminApiClient.get<ApiResponse<any>>(`/api/admin/dashboard/analytics?period=${period}`);
     return response.data;
   },
 };
