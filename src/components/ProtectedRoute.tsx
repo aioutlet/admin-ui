@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { logout } from '../store/slices/authSlice';
+import { logout, setUser } from '../store/slices/authSlice';
+import { authApi } from '../services/api';
+import { User } from '../types';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,27 +17,35 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('admin_token');
+      const userStr = localStorage.getItem('admin_user');
 
       if (!token) {
         setLoading(false);
         return;
       }
 
-      // For now, just check if token exists (until we implement auth verify endpoint)
       try {
-        // Simple JWT token format validation
-        const parts = token.split('.');
-        if (parts.length === 3) {
-          // Token has valid JWT format, consider it valid
+        // Verify token with BFF
+        const result = await authApi.verify();
+
+        if (result.success) {
           setIsAuthenticated(true);
+
+          // Restore user from localStorage if available
+          if (userStr) {
+            try {
+              const user: User = JSON.parse(userStr);
+              dispatch(setUser(user));
+            } catch (e) {
+              console.error('Failed to parse stored user data:', e);
+            }
+          }
         } else {
           dispatch(logout());
-          localStorage.removeItem('admin_token');
         }
       } catch (error) {
-        console.error('Token validation failed:', error);
+        console.error('Token verification failed:', error);
         dispatch(logout());
-        localStorage.removeItem('admin_token');
       } finally {
         setLoading(false);
       }

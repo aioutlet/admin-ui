@@ -11,6 +11,7 @@ export const bffApiClient: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Enable cookie handling for BFF
 });
 
 // Legacy clients (kept for backward compatibility but will route through BFF)
@@ -37,6 +38,8 @@ bffApiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_refresh_token');
+      localStorage.removeItem('admin_user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -45,26 +48,29 @@ bffApiClient.interceptors.response.use(
 
 // Auth API functions
 export const authApi = {
-  login: async (email: string, password: string): Promise<ApiResponse<{ user: any; token: string }>> => {
+  login: async (
+    email: string,
+    password: string
+  ): Promise<ApiResponse<{ user: any; token: string; refreshToken: string }>> => {
     try {
       const response = await authApiClient.post('/api/auth/login', {
         email,
         password,
       });
 
-      // Check if login was successful (auth service returns jwt and user)
+      console.log('Login response:', response.data);
+
+      // Auth service returns: { jwt, user: { _id, email, firstName, lastName, roles, isActive, ... } }
       if (response.data.jwt && response.data.user) {
-        // Transform backend user format to frontend User interface
         const backendUser = response.data.user;
         const frontendUser = {
-          id: backendUser._id,
+          id: backendUser._id || backendUser.id,
           name: `${backendUser.firstName} ${backendUser.lastName}`,
           email: backendUser.email,
-          role: backendUser.roles.includes('admin') ? 'admin' : ('customer' as 'customer' | 'admin' | 'super_admin'),
-          status: backendUser.isActive ? 'active' : ('inactive' as 'active' | 'inactive' | 'suspended'),
-          createdAt: backendUser.createdAt,
-          lastLogin: backendUser.lastLogin,
-          phone: backendUser.phoneNumber,
+          role: (backendUser.roles?.includes('admin') ? 'admin' : 'customer') as 'customer' | 'admin' | 'super_admin',
+          status: (backendUser.isActive ? 'active' : 'inactive') as 'active' | 'inactive' | 'suspended',
+          createdAt: backendUser.createdAt || new Date().toISOString(),
+          lastLogin: backendUser.lastLoginAt || new Date().toISOString(),
         };
 
         return {
@@ -72,33 +78,58 @@ export const authApi = {
           data: {
             user: frontendUser,
             token: response.data.jwt,
+            refreshToken: response.data.refreshToken || '', // Auth service may not return refresh token
           },
         };
       } else {
         return {
           success: false,
-          data: { user: null as any, token: '' },
-          message: 'Invalid login response from server',
+          data: { user: null as any, token: '', refreshToken: '' },
+          message: response.data.error?.message || 'Invalid login response from server',
         };
       }
     } catch (error: any) {
-      // Auth service will return error for invalid credentials
+      console.error('Login error:', error.response?.data);
       return {
         success: false,
-        data: { user: null as any, token: '' },
-        message: error.response?.data?.message || 'Login failed',
+        data: { user: null as any, token: '', refreshToken: '' },
+        message: error.response?.data?.error?.message || error.response?.data?.message || 'Login failed',
       };
     }
   },
 
-  verify: async () => {
-    const response = await authApiClient.get('/api/auth/verify');
-    return response.data;
+  verify: async (): Promise<ApiResponse<any>> => {
+    try {
+      const response = await authApiClient.get('/api/auth/verify');
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: null,
+        message: error.response?.data?.error?.message || 'Token verification failed',
+      };
+    }
   },
 
-  logout: async () => {
-    const response = await authApiClient.post('/api/auth/logout');
-    return response.data;
+  logout: async (): Promise<ApiResponse<null>> => {
+    try {
+      const refreshToken = localStorage.getItem('admin_refresh_token');
+      const response = await authApiClient.post('/api/auth/logout', { refreshToken });
+      return {
+        success: true,
+        data: null,
+        message: response.data.message || 'Logged out successfully',
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: null,
+        message: error.response?.data?.error?.message || 'Logout failed',
+      };
+    }
   },
 };
 

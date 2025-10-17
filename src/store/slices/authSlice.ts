@@ -25,13 +25,17 @@ const authSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-    loginSuccess: (state, action: PayloadAction<{ user: User; token: string }>) => {
+    loginSuccess: (state, action: PayloadAction<{ user: User; token: string; refreshToken?: string }>) => {
       state.isLoading = false;
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
       state.error = null;
       localStorage.setItem('admin_token', action.payload.token);
+      if (action.payload.refreshToken) {
+        localStorage.setItem('admin_refresh_token', action.payload.refreshToken);
+      }
+      localStorage.setItem('admin_user', JSON.stringify(action.payload.user));
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
@@ -44,6 +48,8 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.error = null;
       localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_refresh_token');
+      localStorage.removeItem('admin_user');
     },
     clearError: (state) => {
       state.error = null;
@@ -51,6 +57,7 @@ const authSlice = createSlice({
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
+      localStorage.setItem('admin_user', JSON.stringify(action.payload));
     },
   },
 });

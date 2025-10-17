@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   HomeIcon,
@@ -18,6 +18,7 @@ import {
 import { logout } from '../../store/slices/authSlice';
 import { RootState } from '../../store';
 import ThemeToggle from '../ui/ThemeToggle';
+import { authApi } from '../../services/api';
 
 interface SidebarItem {
   name: string;
@@ -40,11 +41,21 @@ const navigation: SidebarItem[] = [
 const AdminLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    try {
+      // Call logout API to invalidate tokens on server
+      await authApi.logout();
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+    } finally {
+      // Always clear local state and redirect
+      dispatch(logout());
+      navigate('/login', { replace: true });
+    }
   };
 
   const currentNavigation = navigation.map((item) => ({
