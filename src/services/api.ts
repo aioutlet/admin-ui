@@ -209,27 +209,39 @@ export const ordersApi = {
     dateFrom?: string;
     dateTo?: string;
   }) => {
-    const response = await adminApiClient.get<PaginatedResponse<any>>('/orders', { params });
+    const response = await adminApiClient.get<PaginatedResponse<any>>('/api/admin/orders/paged', { params });
     return response.data;
   },
 
   getById: async (id: string) => {
-    const response = await adminApiClient.get<ApiResponse<any>>(`/orders/${id}`);
+    const response = await adminApiClient.get<ApiResponse<any>>(`/api/admin/orders/${id}`);
     return response.data;
   },
 
-  updateStatus: async (id: string, status: string) => {
-    const response = await adminApiClient.patch<ApiResponse<any>>(`/orders/${id}/status`, { status });
+  updateStatus: async (id: string, status: string, paymentStatus?: string, shippingStatus?: string) => {
+    const response = await adminApiClient.put<ApiResponse<any>>(`/api/admin/orders/${id}/status`, {
+      status,
+      paymentStatus,
+      shippingStatus,
+    });
     return response.data;
   },
 
   addNote: async (id: string, note: string) => {
-    const response = await adminApiClient.post<ApiResponse<any>>(`/orders/${id}/notes`, { note });
+    const response = await adminApiClient.post<ApiResponse<any>>(`/api/admin/orders/${id}/notes`, { note });
     return response.data;
   },
 
-  updateTracking: async (id: string, trackingNumber: string) => {
-    const response = await adminApiClient.patch<ApiResponse<any>>(`/orders/${id}/tracking`, { trackingNumber });
+  updateTracking: async (id: string, trackingNumber: string, carrierName?: string) => {
+    const response = await adminApiClient.patch<ApiResponse<any>>(`/api/admin/orders/${id}/tracking`, {
+      trackingNumber,
+      carrierName,
+    });
+    return response.data;
+  },
+
+  delete: async (id: string) => {
+    const response = await adminApiClient.delete<ApiResponse<null>>(`/api/admin/orders/${id}`);
     return response.data;
   },
 };

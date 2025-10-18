@@ -34,38 +34,46 @@ export interface Product {
 
 export interface Order {
   id: string;
-  userId: string;
-  user?: User;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  customerId: string;
+  customerEmail: string;
+  customerName: string;
+  orderNumber: string;
+  status: 'Created' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Refunded';
+  paymentStatus: 'Pending' | 'Authorized' | 'Captured' | 'Failed' | 'Cancelled' | 'Refunded';
+  shippingStatus: 'NotShipped' | 'Preparing' | 'Shipped' | 'InTransit' | 'Delivered' | 'Returned';
   items: OrderItem[];
   subtotal: number;
-  tax: number;
-  shipping: number;
-  total: number;
+  taxAmount: number;
+  shippingCost: number;
+  discountAmount: number;
+  totalAmount: number;
+  currency: string;
   shippingAddress: Address;
-  billingAddress?: Address;
-  paymentMethod: string;
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  billingAddress: Address;
+  trackingNumber?: string;
+  carrierName?: string;
+  notes?: string;
+  internalNotes?: string;
   createdAt: string;
   updatedAt: string;
-  trackingNumber?: string;
-  notes?: string;
+  shippedDate?: string;
+  deliveredDate?: string;
 }
 
 export interface OrderItem {
   id: string;
   productId: string;
-  product?: Product;
+  productName?: string;
   quantity: number;
-  price: number;
-  total: number;
+  unitPrice: number;
+  totalPrice: number;
 }
 
 export interface Address {
   street: string;
   city: string;
   state: string;
-  zipCode: string;
+  postalCode: string;
   country: string;
 }
 
