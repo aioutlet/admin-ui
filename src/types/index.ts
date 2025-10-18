@@ -37,6 +37,7 @@ export interface Order {
   customerId: string;
   customerEmail: string;
   customerName: string;
+  customerPhone?: string;
   orderNumber: string;
   status: 'Created' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Refunded';
   paymentStatus: 'Pending' | 'Authorized' | 'Captured' | 'Failed' | 'Cancelled' | 'Refunded';
@@ -44,36 +45,61 @@ export interface Order {
   items: OrderItem[];
   subtotal: number;
   taxAmount: number;
+  taxRate?: number;
   shippingCost: number;
   discountAmount: number;
   totalAmount: number;
   currency: string;
   shippingAddress: Address;
   billingAddress: Address;
-  trackingNumber?: string;
+  paymentMethodId?: string;
+  paymentProvider?: string;
+  paymentTransactionId?: string;
+  paymentReference?: string;
+  shippingMethod?: string;
   carrierName?: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  estimatedDeliveryDate?: string;
+  actualDeliveryDate?: string;
   notes?: string;
   internalNotes?: string;
   createdAt: string;
   updatedAt: string;
   shippedDate?: string;
   deliveredDate?: string;
+  createdBy: string;
+  lastModifiedBy?: string;
+  lastModifiedAt?: string;
 }
 
 export interface OrderItem {
   id: string;
+  orderId?: string;
   productId: string;
-  productName?: string;
+  productName: string;
+  productSku?: string;
+  productImage?: string;
   quantity: number;
   unitPrice: number;
+  originalPrice?: number;
+  discountAmount?: number;
+  discountPercentage?: number;
+  taxAmount?: number;
+  shippingCostPerItem?: number;
   totalPrice: number;
+  isGift?: boolean;
+  giftMessage?: string;
+  giftWrapCost?: number;
+  notes?: string;
 }
 
 export interface Address {
-  street: string;
+  addressLine1: string;
+  addressLine2?: string;
   city: string;
   state: string;
-  postalCode: string;
+  zipCode: string;
   country: string;
 }
 
