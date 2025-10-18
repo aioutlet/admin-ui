@@ -237,22 +237,27 @@ export const ordersApi = {
 // Reviews API functions
 export const reviewsApi = {
   getAll: async (params?: { page?: number; limit?: number; search?: string; status?: string; rating?: number }) => {
-    const response = await adminApiClient.get<PaginatedResponse<any>>('/reviews', { params });
+    const response = await adminApiClient.get<PaginatedResponse<any>>('/api/admin/reviews', { params });
     return response.data;
   },
 
   getById: async (id: string) => {
-    const response = await adminApiClient.get<ApiResponse<any>>(`/reviews/${id}`);
+    const response = await adminApiClient.get<ApiResponse<any>>(`/api/admin/reviews/${id}`);
     return response.data;
   },
 
   updateStatus: async (id: string, status: string) => {
-    const response = await adminApiClient.patch<ApiResponse<any>>(`/reviews/${id}/status`, { status });
+    const response = await adminApiClient.patch<ApiResponse<any>>(`/api/admin/reviews/${id}`, { status });
     return response.data;
   },
 
   delete: async (id: string) => {
-    const response = await adminApiClient.delete<ApiResponse<null>>(`/reviews/${id}`);
+    const response = await adminApiClient.delete<ApiResponse<null>>(`/api/admin/reviews/${id}`);
+    return response.data;
+  },
+
+  getStats: async () => {
+    const response = await adminApiClient.get<ApiResponse<any>>('/api/admin/reviews/stats');
     return response.data;
   },
 };

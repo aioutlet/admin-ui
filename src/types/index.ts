@@ -80,7 +80,15 @@ export interface Review {
   comment: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
-  helpfulCount?: number;
+  helpfulVotes?: {
+    helpful: number;
+    notHelpful: number;
+    userVotes?: Array<{
+      userId: string;
+      vote: 'helpful' | 'notHelpful';
+      votedAt: string;
+    }>;
+  };
   verified?: boolean;
 }
 
