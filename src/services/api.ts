@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { ApiResponse, PaginatedResponse } from '../types';
+import logger from '../utils/logger';
 
 // Base API configuration - Route through BFF
 const BFF_API_URL = process.env.REACT_APP_BFF_API_URL || 'http://localhost:3100';
@@ -28,6 +29,7 @@ bffApiClient.interceptors.request.use(
     return config;
   },
   (error) => {
+    logger.error('API Request Setup Failed', { error: error.message });
     return Promise.reject(error);
   }
 );
@@ -36,12 +38,32 @@ bffApiClient.interceptors.request.use(
 bffApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Only log meaningful error information
+    if (error.response) {
+      // Server responded with error status
+      logger.error(`API Error: ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
+        statusCode: error.response.status,
+        statusText: error.response.statusText,
+        message: error.response.data?.message || error.response.data?.error?.message,
+      });
+    } else if (error.request) {
+      // Request was made but no response received (network error)
+      logger.error(`Network Error: Cannot reach ${BFF_API_URL}`, {
+        errorCode: error.code,
+        message: 'BFF service may not be running',
+        url: error.config?.url,
+      });
+    }
+
+    // Handle 401 unauthorized
     if (error.response?.status === 401) {
+      logger.warn('Session expired - redirecting to login');
       localStorage.removeItem('admin_token');
       localStorage.removeItem('admin_refresh_token');
       localStorage.removeItem('admin_user');
       window.location.href = '/login';
     }
+
     return Promise.reject(error);
   }
 );
@@ -58,8 +80,6 @@ export const authApi = {
         password,
       });
 
-      console.log('Login response:', response.data);
-
       // Auth service returns: { jwt, user: { _id, email, firstName, lastName, roles, isActive, ... } }
       if (response.data.jwt && response.data.user) {
         const backendUser = response.data.user;
@@ -72,6 +92,8 @@ export const authApi = {
           createdAt: backendUser.createdAt || new Date().toISOString(),
           lastLogin: backendUser.lastLoginAt || new Date().toISOString(),
         };
+
+        logger.info('Login successful', { userId: frontendUser.id, role: frontendUser.role });
 
         return {
           success: true,
@@ -89,11 +111,27 @@ export const authApi = {
         };
       }
     } catch (error: any) {
-      console.error('Login error:', error.response?.data);
+      // Determine user-friendly error message
+      let userMessage = 'Login failed';
+
+      if (!error.response && (error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED')) {
+        userMessage = 'Cannot connect to server. Please check if the service is running.';
+      } else if (error.response?.status === 502 || error.response?.status === 503) {
+        userMessage = 'Backend service unavailable. The authentication service may be down.';
+      } else if (error.response?.status === 401) {
+        userMessage = error.response?.data?.error?.message || 'Invalid email or password';
+      } else if (error.response?.data?.error?.message) {
+        userMessage = error.response.data.error.message;
+      } else if (error.response?.data?.message) {
+        userMessage = error.response.data.message;
+      }
+
+      logger.authError('Login', error, { email, userMessage });
+
       return {
         success: false,
         data: { user: null as any, token: '', refreshToken: '' },
-        message: error.response?.data?.error?.message || error.response?.data?.message || 'Login failed',
+        message: userMessage,
       };
     }
   },

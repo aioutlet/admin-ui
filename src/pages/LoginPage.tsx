@@ -5,6 +5,7 @@ import { loginStart, loginSuccess, loginFailure } from '../store/slices/authSlic
 import { authApi } from '../services/api';
 import { RootState } from '../store';
 import ThemeToggle from '../components/ui/ThemeToggle';
+import TroubleshootingPanel from '../components/ui/TroubleshootingPanel';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -32,6 +33,7 @@ const LoginPage: React.FC = () => {
 
     try {
       dispatch(loginStart());
+
       const response = await authApi.login(email, password);
 
       if (response.success) {
@@ -41,7 +43,8 @@ const LoginPage: React.FC = () => {
         dispatch(loginFailure(response.message || 'Login failed'));
       }
     } catch (error: any) {
-      dispatch(loginFailure(error.response?.data?.message || 'Login failed'));
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed. Please try again.';
+      dispatch(loginFailure(errorMessage));
     }
   };
 
@@ -98,12 +101,14 @@ const LoginPage: React.FC = () => {
                         />
                       </svg>
                     </div>
-                    <div className="ml-3">
+                    <div className="ml-3 flex-1">
                       <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
                     </div>
                   </div>
                 </div>
               )}
+
+              <TroubleshootingPanel error={error || ''} />
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
