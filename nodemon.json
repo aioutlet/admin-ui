@@ -2,7 +2,7 @@
   "watch": ["src", "public"],
   "ext": "js,jsx,ts,tsx,css,scss,json,html",
   "ignore": ["node_modules", "build", "dist", "coverage", "*.test.js", "*.test.jsx", "*.test.ts", "*.test.tsx"],
-  "exec": "react-scripts start",
+  "exec": "react-app-rewired start",
   "env": {
     "NODE_ENV": "development"
   },
