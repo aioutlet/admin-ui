@@ -169,32 +169,32 @@ export const usersApi = {
 // Products API functions
 export const productsApi = {
   getAll: async (params?: { page?: number; limit?: number; search?: string; category?: string; status?: string }) => {
-    const response = await adminApiClient.get<PaginatedResponse<any>>('/products', { params });
+    const response = await adminApiClient.get<PaginatedResponse<any>>('/api/admin/products', { params });
     return response.data;
   },
 
   getById: async (id: string) => {
-    const response = await adminApiClient.get<ApiResponse<any>>(`/products/${id}`);
+    const response = await adminApiClient.get<ApiResponse<any>>(`/api/admin/products/${id}`);
     return response.data;
   },
 
   create: async (productData: any) => {
-    const response = await adminApiClient.post<ApiResponse<any>>('/products', productData);
+    const response = await adminApiClient.post<ApiResponse<any>>('/api/admin/products', productData);
     return response.data;
   },
 
   update: async (id: string, productData: any) => {
-    const response = await adminApiClient.put<ApiResponse<any>>(`/products/${id}`, productData);
+    const response = await adminApiClient.patch<ApiResponse<any>>(`/api/admin/products/${id}`, productData);
     return response.data;
   },
 
   delete: async (id: string) => {
-    const response = await adminApiClient.delete<ApiResponse<null>>(`/products/${id}`);
+    const response = await adminApiClient.delete<ApiResponse<null>>(`/api/admin/products/${id}`);
     return response.data;
   },
 
   updateStatus: async (id: string, status: string) => {
-    const response = await adminApiClient.patch<ApiResponse<any>>(`/products/${id}/status`, { status });
+    const response = await adminApiClient.patch<ApiResponse<any>>(`/api/admin/products/${id}/status`, { status });
     return response.data;
   },
 };
