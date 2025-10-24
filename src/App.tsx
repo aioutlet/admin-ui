@@ -6,6 +6,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import UsersPage from './pages/UsersPage';
+import AddUserPage from './pages/AddUserPage';
+import EditUserPage from './pages/EditUserPage';
 import ProductsPage from './pages/ProductsPage';
 import InventoryPage from './pages/InventoryPage';
 import OrdersPage from './pages/OrdersPage';
@@ -34,6 +36,8 @@ function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="users/add" element={<AddUserPage />} />
+            <Route path="users/edit/:id" element={<EditUserPage />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="inventory" element={<InventoryPage />} />
             <Route path="orders" element={<OrdersPage />} />

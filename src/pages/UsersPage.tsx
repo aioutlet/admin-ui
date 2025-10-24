@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, FunnelIcon, PencilIcon, TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { usersApi } from '../services/api';
 import { User } from '../types';
@@ -7,6 +8,7 @@ import Badge from '../components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/Table';
 
 const UsersPage: React.FC = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,17 +19,8 @@ const UsersPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // Modal states
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  // Form state
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'customer' as 'customer' | 'admin' | 'super_admin',
-    status: 'active' as 'active' | 'inactive' | 'suspended',
-  });
 
   useEffect(() => {
     fetchUsers();
@@ -73,7 +66,8 @@ const UsersPage: React.FC = () => {
         id: user._id || user.id,
         name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email,
         email: user.email,
-        role: user.roles?.includes('admin') ? ('admin' as const) : ('customer' as const),
+        roles: user.roles || ['customer'],
+        role: user.roles?.includes('admin') ? ('admin' as const) : ('customer' as const), // Primary role
         status: user.isActive ? ('active' as const) : ('inactive' as const),
         createdAt: user.createdAt,
         lastLogin: user.lastLoginAt,
@@ -90,40 +84,12 @@ const UsersPage: React.FC = () => {
   };
 
   const handleEditUser = (user: User) => {
-    setSelectedUser(user);
-    setFormData({
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-    });
-    setIsEditModalOpen(true);
+    navigate(`/users/edit/${user.id}`);
   };
 
   const handleDeleteUser = (user: User) => {
     setSelectedUser(user);
     setIsDeleteModalOpen(true);
-  };
-
-  const handleSaveUser = async () => {
-    if (!selectedUser) return;
-
-    try {
-      const [firstName, ...lastNameParts] = formData.name.split(' ');
-      const updateData = {
-        firstName,
-        lastName: lastNameParts.join(' ') || firstName,
-        email: formData.email,
-        roles: formData.role === 'admin' ? ['admin'] : ['customer'],
-        isActive: formData.status === 'active',
-      };
-
-      await usersApi.update(selectedUser.id, updateData);
-      setIsEditModalOpen(false);
-      fetchUsers();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update user');
-    }
   };
 
   const handleConfirmDelete = async () => {
@@ -178,7 +144,7 @@ const UsersPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Users Management</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage and monitor all users in the system</p>
         </div>
-        <button className="btn btn-primary flex items-center gap-2">
+        <button onClick={() => navigate('/users/add')} className="btn btn-primary flex items-center gap-2">
           <UserPlusIcon className="h-5 w-5" />
           Add New User
         </button>
@@ -300,7 +266,13 @@ const UsersPage: React.FC = () => {
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Badge variant={getRoleBadgeVariant(user.role)}>{user.role.replace('_', ' ')}</Badge>
+                    <div className="flex flex-wrap gap-1">
+                      {user.roles.map((role) => (
+                        <Badge key={role} variant={getRoleBadgeVariant(role)}>
+                          {role.replace('_', ' ')}
+                        </Badge>
+                      ))}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(user.status)}>{user.status}</Badge>
@@ -330,66 +302,6 @@ const UsersPage: React.FC = () => {
           </TableBody>
         </Table>
       </div>
-
-      {/* Edit User Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit User" size="md">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
-            <select
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-            >
-              <option value="customer">Customer</option>
-              <option value="admin">Admin</option>
-              <option value="super_admin">Super Admin</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4">
-            <button onClick={() => setIsEditModalOpen(false)} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button onClick={handleSaveUser} className="btn btn-primary">
-              Save Changes
-            </button>
-          </div>
-        </div>
-      </Modal>
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Delete User" size="sm">
