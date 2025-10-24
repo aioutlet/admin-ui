@@ -3,8 +3,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'customer' | 'admin' | 'super_admin'; // Primary role for backward compatibility
-  roles: ('customer' | 'admin' | 'super_admin')[]; // All roles
+  role: 'customer' | 'admin'; // Primary role for backward compatibility
+  roles: ('customer' | 'admin')[]; // All roles
   status: 'active' | 'inactive' | 'suspended';
   createdAt: string;
   lastLogin?: string;

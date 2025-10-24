@@ -15,16 +15,22 @@ const DashboardPage: React.FC = () => {
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: dashboardApi.getStats,
+    refetchOnMount: 'always',
+    staleTime: 0,
   });
 
   const { data: recentOrders, isLoading: ordersLoading } = useQuery({
     queryKey: ['recent-orders'],
     queryFn: dashboardApi.getRecentOrders,
+    refetchOnMount: 'always',
+    staleTime: 0,
   });
 
   const { data: recentUsers, isLoading: usersLoading } = useQuery({
     queryKey: ['recent-users'],
     queryFn: dashboardApi.getRecentUsers,
+    refetchOnMount: 'always',
+    staleTime: 0,
   });
 
   // Mock data for demonstration when API is not available

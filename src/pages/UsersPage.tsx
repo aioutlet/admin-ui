@@ -108,8 +108,6 @@ const UsersPage: React.FC = () => {
     switch (role) {
       case 'admin':
         return 'info';
-      case 'super_admin':
-        return 'warning';
       default:
         return 'default';
     }
@@ -191,7 +189,6 @@ const UsersPage: React.FC = () => {
                 <option value="all">All Roles</option>
                 <option value="customer">Customer</option>
                 <option value="admin">Admin</option>
-                <option value="super_admin">Super Admin</option>
               </select>
             </div>
 
