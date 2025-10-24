@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   UsersIcon,
@@ -12,6 +13,8 @@ import StatCard from '../components/ui/StatCard';
 import { dashboardApi } from '../services/api';
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: dashboardApi.getStats,
@@ -167,7 +170,10 @@ const DashboardPage: React.FC = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Orders</h2>
-            <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+            <button
+              onClick={() => navigate('/orders')}
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+            >
               View all
             </button>
           </div>
@@ -206,7 +212,10 @@ const DashboardPage: React.FC = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Users</h2>
-            <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+            <button
+              onClick={() => navigate('/users')}
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+            >
               View all
             </button>
           </div>
