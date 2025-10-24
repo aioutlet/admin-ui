@@ -241,10 +241,6 @@ const ProductsPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Products Management</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your product catalog and inventory</p>
-        </div>
         <button onClick={handleCreateProduct} className="btn btn-primary flex items-center gap-2">
           <PlusIcon className="h-5 w-5" />
           Add New Product

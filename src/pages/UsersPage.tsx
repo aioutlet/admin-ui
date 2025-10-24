@@ -137,11 +137,7 @@ const UsersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Users Management</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage and monitor all users in the system</p>
-        </div>
+      <div className="flex justify-end items-center">
         <button onClick={() => navigate('/users/add')} className="btn btn-primary flex items-center gap-2">
           <UserPlusIcon className="h-5 w-5" />
           Add New User

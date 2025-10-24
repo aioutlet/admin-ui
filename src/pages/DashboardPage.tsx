@@ -82,14 +82,6 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard Overview</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Welcome to your admin dashboard. Here's what's happening with your platform today.
-        </p>
-      </div>
-
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
@@ -253,25 +245,37 @@ const DashboardPage: React.FC = () => {
       <div className="card p-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <button
+            onClick={() => navigate('/users/add')}
+            className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
             <UsersIcon className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />
             <p className="text-sm font-medium text-gray-900 dark:text-white">Add New User</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Create admin or customer account</p>
           </button>
 
-          <button className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <button
+            onClick={() => navigate('/products')}
+            className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
             <CubeIcon className="h-6 w-6 text-green-600 dark:text-green-400 mb-2" />
             <p className="text-sm font-medium text-gray-900 dark:text-white">Add Product</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Create new product listing</p>
           </button>
 
-          <button className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <button
+            onClick={() => navigate('/orders')}
+            className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
             <ShoppingBagIcon className="h-6 w-6 text-purple-600 dark:text-purple-400 mb-2" />
             <p className="text-sm font-medium text-gray-900 dark:text-white">Process Orders</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Review pending orders</p>
           </button>
 
-          <button className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <button
+            onClick={() => navigate('/reviews')}
+            className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
             <StarIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mb-2" />
             <p className="text-sm font-medium text-gray-900 dark:text-white">Review Management</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Moderate customer reviews</p>

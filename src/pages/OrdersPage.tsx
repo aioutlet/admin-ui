@@ -230,10 +230,6 @@ const OrdersPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Orders Management</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage and track customer orders</p>
-        </div>
         <div className="flex gap-4">
           <div className="card p-4 text-right">
             <p className="text-sm text-gray-500 dark:text-gray-400">Total Orders</p>

@@ -208,12 +208,7 @@ const ReviewsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reviews Management</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Moderate and manage customer reviews</p>
-        </div>
-      </div>
+      <div className="flex justify-between items-center" />
 
       {/* Search and Filters */}
       <div className="card p-4">
