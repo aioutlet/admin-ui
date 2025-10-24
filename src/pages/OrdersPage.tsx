@@ -45,6 +45,8 @@ const OrdersPage: React.FC = () => {
     pending: 0,
     processing: 0,
     shipped: 0,
+    delivered: 0,
+    cancelled: 0,
     totalRevenue: 0,
   });
 
@@ -105,10 +107,12 @@ const OrdersPage: React.FC = () => {
     const total = orderList.length;
     const pending = orderList.filter((o) => o.status === 'Created' || o.status === 'Confirmed').length;
     const processing = orderList.filter((o) => o.status === 'Processing').length;
-    const shipped = orderList.filter((o) => o.status === 'Shipped' || o.status === 'Delivered').length;
+    const shipped = orderList.filter((o) => o.status === 'Shipped').length;
+    const delivered = orderList.filter((o) => o.status === 'Delivered').length;
+    const cancelled = orderList.filter((o) => o.status === 'Cancelled').length;
     const totalRevenue = orderList.reduce((sum, o) => sum + o.totalAmount, 0);
 
-    setStats({ total, pending, processing, shipped, totalRevenue });
+    setStats({ total, pending, processing, shipped, delivered, cancelled, totalRevenue });
   };
 
   const handleViewOrder = (order: Order) => {
@@ -225,10 +229,22 @@ const OrdersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-start">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Orders Management</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage and track customer orders</p>
+        </div>
+        <div className="flex gap-4">
+          <div className="card p-4 text-right">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Total Orders</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+          </div>
+          <div className="card p-4 text-right">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              {formatCurrency(stats.totalRevenue)}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -310,11 +326,7 @@ const OrdersPage: React.FC = () => {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-        <div className="card p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Orders</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="card p-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">Pending</p>
           <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
@@ -325,13 +337,15 @@ const OrdersPage: React.FC = () => {
         </div>
         <div className="card p-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">Shipped</p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{stats.shipped}</p>
+          <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">{stats.shipped}</p>
         </div>
         <div className="card p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
-          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
-            {formatCurrency(stats.totalRevenue)}
-          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Delivered</p>
+          <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{stats.delivered}</p>
+        </div>
+        <div className="card p-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Cancelled</p>
+          <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.cancelled}</p>
         </div>
       </div>
 
