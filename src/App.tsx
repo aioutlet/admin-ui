@@ -9,6 +9,8 @@ import UsersPage from './pages/UsersPage';
 import AddUserPage from './pages/AddUserPage';
 import EditUserPage from './pages/EditUserPage';
 import ProductsPage from './pages/ProductsPage';
+import AddProductPage from './pages/AddProductPage';
+import EditProductPage from './pages/EditProductPage';
 import InventoryPage from './pages/InventoryPage';
 import OrdersPage from './pages/OrdersPage';
 import ReviewsPage from './pages/ReviewsPage';
@@ -39,6 +41,8 @@ function App() {
             <Route path="users/add" element={<AddUserPage />} />
             <Route path="users/edit/:id" element={<EditUserPage />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="products/add" element={<AddProductPage />} />
+            <Route path="products/edit/:id" element={<EditProductPage />} />
             <Route path="inventory" element={<InventoryPage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="reviews" element={<ReviewsPage />} />

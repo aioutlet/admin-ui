@@ -18,16 +18,33 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  category: string;
-  subcategory?: string;
   brand?: string;
   sku: string;
-  status: 'active' | 'inactive' | 'draft';
-  stock: number;
+
+  // Hierarchical category taxonomy
+  department?: string; // Level 1: Women, Men, Kids, Electronics, Sports, Books
+  category?: string; // Level 2: Clothing, Accessories, Computers, Audio, etc.
+  subcategory?: string; // Level 3: Tops, Laptops, Headphones, Running, etc.
+  product_type?: string; // Level 4: T-Shirts, Gaming Laptops, etc. (for filtering only)
+
+  // Media and metadata
   images: string[];
   tags: string[];
+
+  // Product variations
+  colors?: string[]; // Available colors: ["Red", "Blue", "Black"]
+  sizes?: string[]; // Available sizes: ["S", "M", "L", "XL"]
+
+  // Product specifications (flexible key-value pairs)
   specifications?: Record<string, string>;
   highlights?: string[];
+
+  // Status
+  status: 'active' | 'inactive' | 'draft';
+  is_active?: boolean;
+  stock: number;
+
+  // Audit trail
   createdAt: string;
   updatedAt: string;
   createdBy: string;

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
@@ -14,6 +16,8 @@ import Badge from '../components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/Table';
 
 const ProductsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,10 +86,16 @@ const ProductsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await productsApi.getAll();
+      const response = await productsApi.getAll({ limit: 100 }); // Fetch all products
+
+      console.log('Products API response:', response);
+
+      // The BFF returns { success: true, data: [...products], pagination: {...} }
+      // response.data is the array of products
+      const productsArray = Array.isArray(response.data) ? response.data : [];
 
       // Transform the backend data to match our Product interface
-      const transformedProducts = response.data.map((product: any) => ({
+      const transformedProducts = productsArray.map((product: any) => ({
         id: product._id || product.id,
         name: product.name,
         description: product.description,
@@ -104,6 +114,7 @@ const ProductsPage: React.FC = () => {
       }));
 
       setProducts(transformedProducts);
+      setFilteredProducts(transformedProducts);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load products');
       console.error('Error fetching products:', err);
@@ -113,38 +124,11 @@ const ProductsPage: React.FC = () => {
   };
 
   const handleCreateProduct = () => {
-    setFormData({
-      name: '',
-      description: '',
-      price: 0,
-      category: '',
-      subcategory: '',
-      brand: '',
-      sku: '',
-      status: 'active',
-      stock: 0,
-      tags: [],
-      images: [],
-    });
-    setIsCreateModalOpen(true);
+    navigate('/products/add');
   };
 
   const handleEditProduct = (product: Product) => {
-    setSelectedProduct(product);
-    setFormData({
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      category: product.category,
-      subcategory: product.subcategory || '',
-      brand: product.brand || '',
-      sku: product.sku,
-      status: product.status,
-      stock: product.stock,
-      tags: product.tags || [],
-      images: product.images || [],
-    });
-    setIsEditModalOpen(true);
+    navigate(`/products/edit/${product.id}`);
   };
 
   const handleDeleteProduct = (product: Product) => {
@@ -206,6 +190,8 @@ const ProductsPage: React.FC = () => {
     try {
       await productsApi.delete(selectedProduct.id);
       setIsDeleteModalOpen(false);
+      // Invalidate dashboard stats to reflect deleted product count
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       fetchProducts();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to delete product');
