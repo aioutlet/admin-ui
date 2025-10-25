@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { ApiResponse, PaginatedResponse } from '../types';
 import logger from '../utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 // Base API configuration - Route through BFF
 const BFF_API_URL = process.env.REACT_APP_BFF_API_URL || 'http://localhost:3100';
@@ -22,10 +23,17 @@ export const adminApiClient = bffApiClient;
 // Request interceptor for BFF API
 bffApiClient.interceptors.request.use(
   (config) => {
+    // Add authentication token
     const token = localStorage.getItem('admin_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Add correlation ID for distributed tracing
+    if (!config.headers['x-correlation-id']) {
+      config.headers['x-correlation-id'] = uuidv4();
+    }
+
     return config;
   },
   (error) => {
