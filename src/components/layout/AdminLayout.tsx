@@ -73,10 +73,19 @@ const AdminLayout: React.FC = () => {
 
   const displayName = getUserName();
 
-  const currentNavigation = navigation.map((item) => ({
-    ...item,
-    current: location.pathname === item.href || location.pathname.startsWith(item.href + '/'),
-  }));
+  const currentNavigation = navigation.map((item) => {
+    // Detail pages (with IDs) should not highlight any menu item
+    const isDetailPage = location.pathname.match(/\/[a-f0-9-]{36}$/i); // matches UUID at end of path
+
+    if (isDetailPage) {
+      return { ...item, current: false };
+    }
+
+    return {
+      ...item,
+      current: location.pathname === item.href || location.pathname.startsWith(item.href + '/'),
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

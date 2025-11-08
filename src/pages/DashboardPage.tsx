@@ -19,8 +19,9 @@ const DashboardPage: React.FC = () => {
   const { data: dashboardData, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-complete'],
     queryFn: () => dashboardApi.getStats(true, 5), // includeRecent=true, limit=5
-    refetchOnMount: 'always',
-    staleTime: 0,
+    staleTime: 30000, // Consider data fresh for 30 seconds (prevents duplicate calls)
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch on component remount (StrictMode causes double-mount)
   });
 
   // Mock data for demonstration when API is not available
@@ -168,11 +169,12 @@ const DashboardPage: React.FC = () => {
             {displayOrders.map((order: any) => (
               <div
                 key={order.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50"
+                onClick={() => navigate(`/orders/${order.id}`, { state: { from: '/dashboard' } })}
+                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{order.customer}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Order #{order.id}</p>
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Order #{order.id}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">${order.total}</p>
