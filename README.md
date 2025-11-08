@@ -1,6 +1,6 @@
 # AIOutlet Admin UI
 
-A modern React + TypeScript admin dashboard for managing the AIOutlet e-commerce platform. Built with the same design system and theme as the customer web-ui for consistent user experience.
+A modern React + TypeScript admin dashboard for managing the AIOutlet e-commerce platform. Built with the same design system and theme as the customer-ui for consistent user experience.
 
 ## Features
 
