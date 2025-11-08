@@ -88,15 +88,16 @@ export const authApi = {
         password,
       });
 
-      // Auth service returns: { jwt, user: { _id, email, firstName, lastName, roles, isActive, ... } }
-      if (response.data.jwt && response.data.user) {
+      // Auth service returns: { token, user: { id, email, firstName, lastName, name, roles, isEmailVerified, isActive, createdAt } }
+      if (response.data.token && response.data.user) {
         const backendUser = response.data.user;
         const frontendUser = {
           id: backendUser._id || backendUser.id,
-          name: `${backendUser.firstName} ${backendUser.lastName}`,
+          name: backendUser.name || backendUser.email?.split('@')[0] || 'User',
           email: backendUser.email,
-          role: (backendUser.roles?.includes('admin') ? 'admin' : 'customer') as 'customer' | 'admin' | 'super_admin',
-          status: (backendUser.isActive ? 'active' : 'inactive') as 'active' | 'inactive' | 'suspended',
+          role: (backendUser.roles?.includes('admin') ? 'admin' : 'customer') as 'customer' | 'admin',
+          roles: backendUser.roles || [],
+          status: (backendUser.isActive !== false ? 'active' : 'inactive') as 'active' | 'inactive' | 'suspended',
           createdAt: backendUser.createdAt || new Date().toISOString(),
           lastLogin: backendUser.lastLoginAt || new Date().toISOString(),
         };
@@ -107,7 +108,7 @@ export const authApi = {
           success: true,
           data: {
             user: frontendUser,
-            token: response.data.jwt,
+            token: response.data.token,
             refreshToken: response.data.refreshToken || '', // Auth service may not return refresh token
           },
         };
@@ -345,19 +346,31 @@ export const inventoryApi = {
 
 // Dashboard API functions
 export const dashboardApi = {
-  getStats: async () => {
-    const response = await adminApiClient.get<ApiResponse<any>>('/api/admin/dashboard/stats');
+  getStats: async (includeRecent: boolean = false, recentLimit: number = 10) => {
+    const params = new URLSearchParams();
+    if (includeRecent) {
+      params.append('includeRecent', 'true');
+      params.append('recentLimit', recentLimit.toString());
+    }
+    const url = `/api/admin/dashboard/stats${params.toString() ? '?' + params.toString() : ''}`;
+    const response = await adminApiClient.get<ApiResponse<any>>(url);
     return response.data;
   },
 
-  getRecentOrders: async () => {
-    const response = await adminApiClient.get<ApiResponse<any[]>>('/api/admin/dashboard/recent-orders');
-    return response.data;
+  getRecentOrders: async (limit: number = 10) => {
+    // Use the stats endpoint with includeRecent flag
+    const response = await adminApiClient.get<ApiResponse<any>>(
+      `/api/admin/dashboard/stats?includeRecent=true&recentLimit=${limit}`
+    );
+    return (response.data as any).recentOrders || [];
   },
 
-  getRecentUsers: async () => {
-    const response = await adminApiClient.get<ApiResponse<any[]>>('/api/admin/dashboard/recent-users');
-    return response.data;
+  getRecentUsers: async (limit: number = 10) => {
+    // Use the stats endpoint with includeRecent flag
+    const response = await adminApiClient.get<ApiResponse<any>>(
+      `/api/admin/dashboard/stats?includeRecent=true&recentLimit=${limit}`
+    );
+    return (response.data as any).recentUsers || [];
   },
 
   getAnalytics: async (period: string) => {

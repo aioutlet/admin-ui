@@ -15,23 +15,10 @@ import { dashboardApi } from '../services/api';
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['dashboard-stats'],
-    queryFn: dashboardApi.getStats,
-    refetchOnMount: 'always',
-    staleTime: 0,
-  });
-
-  const { data: recentOrders, isLoading: ordersLoading } = useQuery({
-    queryKey: ['recent-orders'],
-    queryFn: dashboardApi.getRecentOrders,
-    refetchOnMount: 'always',
-    staleTime: 0,
-  });
-
-  const { data: recentUsers, isLoading: usersLoading } = useQuery({
-    queryKey: ['recent-users'],
-    queryFn: dashboardApi.getRecentUsers,
+  // Fetch all dashboard data in a single API call
+  const { data: dashboardData, isLoading: statsLoading } = useQuery({
+    queryKey: ['dashboard-complete'],
+    queryFn: () => dashboardApi.getStats(true, 5), // includeRecent=true, limit=5
     refetchOnMount: 'always',
     staleTime: 0,
   });
@@ -68,11 +55,19 @@ const DashboardPage: React.FC = () => {
     },
   ];
 
-  const displayStats = stats?.data || mockStats;
-  const displayOrders = recentOrders?.data || mockRecentOrders;
-  const displayUsers = recentUsers?.data || mockRecentUsers;
+  // Extract stats, recentOrders, and recentUsers from the unified response
+  const stats = dashboardData?.data;
 
-  if (statsLoading && !stats) {
+  // Check if we have real data (at least one stat > 0) or should use mocks
+  const hasRealData =
+    stats &&
+    (stats.users?.total > 0 || stats.orders?.total > 0 || stats.products?.total > 0 || stats.reviews?.total > 0);
+
+  const displayStats = hasRealData ? stats : mockStats;
+  const displayOrders = hasRealData && stats?.recentOrders?.length > 0 ? stats.recentOrders : mockRecentOrders;
+  const displayUsers = hasRealData && stats?.recentUsers?.length > 0 ? stats.recentUsers : mockRecentUsers;
+
+  if (statsLoading && !dashboardData) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-indigo-400"></div>

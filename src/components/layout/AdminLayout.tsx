@@ -58,6 +58,21 @@ const AdminLayout: React.FC = () => {
     }
   };
 
+  // Get user display name (support both formats for backward compatibility)
+  const getUserName = () => {
+    if (!user) return 'User';
+    if (user.name) return user.name;
+    // Fallback: construct from firstName and lastName if available
+    const userAny = user as any;
+    if (userAny.firstName && userAny.lastName) {
+      return `${userAny.firstName} ${userAny.lastName}`;
+    }
+    if (userAny.firstName) return userAny.firstName;
+    return user.email?.split('@')[0] || 'User';
+  };
+
+  const displayName = getUserName();
+
   const currentNavigation = navigation.map((item) => ({
     ...item,
     current: location.pathname === item.href || location.pathname.startsWith(item.href + '/'),
@@ -109,10 +124,10 @@ const AdminLayout: React.FC = () => {
           <div className="border-t border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-medium text-xs">{user?.name?.charAt(0).toUpperCase() || 'A'}</span>
+                <span className="text-white font-medium text-xs">{displayName.charAt(0).toUpperCase()}</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{displayName}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
               </div>
             </div>
@@ -162,10 +177,10 @@ const AdminLayout: React.FC = () => {
           <div className="border-t border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-medium text-xs">{user?.name?.charAt(0).toUpperCase() || 'A'}</span>
+                <span className="text-white font-medium text-xs">{displayName.charAt(0).toUpperCase()}</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{displayName}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
               </div>
             </div>
@@ -212,9 +227,9 @@ const AdminLayout: React.FC = () => {
               <div className="hidden lg:block">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium text-xs">{user?.name?.charAt(0).toUpperCase() || 'A'}</span>
+                    <span className="text-white font-medium text-xs">{displayName.charAt(0).toUpperCase()}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.name}</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{displayName}</span>
                 </div>
               </div>
             </div>
