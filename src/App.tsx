@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import UsersPage from './pages/UsersPage';
 import AddUserPage from './pages/AddUserPage';
 import EditUserPage from './pages/EditUserPage';
+import UserDetailPage from './pages/UserDetailPage';
 import ProductsPage from './pages/ProductsPage';
 import AddProductPage from './pages/AddProductPage';
 import EditProductPage from './pages/EditProductPage';
@@ -41,6 +42,7 @@ function App() {
             <Route path="users" element={<UsersPage />} />
             <Route path="users/add" element={<AddUserPage />} />
             <Route path="users/edit/:id" element={<EditUserPage />} />
+            <Route path="users/:id" element={<UserDetailPage />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/add" element={<AddProductPage />} />
             <Route path="products/edit/:id" element={<EditProductPage />} />

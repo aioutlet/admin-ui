@@ -212,7 +212,8 @@ const DashboardPage: React.FC = () => {
             {displayUsers.map((user: any) => (
               <div
                 key={user.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50"
+                onClick={() => navigate(`/users/${user.id}`, { state: { from: '/dashboard' } })}
+                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
@@ -220,7 +221,7 @@ const DashboardPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                    <p className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">{user.email}</p>
                   </div>
                 </div>
                 <span
