@@ -4,7 +4,7 @@ import logger from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';
 
 // Base API configuration - Route through BFF
-const BFF_API_URL = process.env.REACT_APP_BFF_API_URL || 'http://localhost:3100';
+const BFF_API_URL = process.env.REACT_APP_BFF_API_URL || 'http://localhost:8080';
 
 // Create axios instance for BFF API
 export const bffApiClient: AxiosInstance = axios.create({
