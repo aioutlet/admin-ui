@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
@@ -16,6 +17,7 @@ import Badge from '../components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/Table';
 
 const OrdersPage: React.FC = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -371,7 +373,12 @@ const OrdersPage: React.FC = () => {
                 <TableRow key={order.id}>
                   <TableCell>
                     <div>
-                      <div className="font-medium text-gray-900 dark:text-white">{order.orderNumber}</div>
+                      <button
+                        onClick={() => navigate(`/orders/${order.id}`)}
+                        className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline text-left"
+                      >
+                        {order.orderNumber}
+                      </button>
                       <div className="text-xs text-gray-500 dark:text-gray-400">{order.items.length} items</div>
                     </div>
                   </TableCell>
