@@ -33,7 +33,8 @@ const UsersPage: React.FC = () => {
     if (searchTerm) {
       filtered = filtered.filter(
         (user) =>
-          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase())) ||
           user.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -255,7 +256,9 @@ const UsersPage: React.FC = () => {
               filteredUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
-                    <div className="font-medium">{user.name}</div>
+                    <div className="font-medium">
+                      {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.email}
+                    </div>
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
@@ -300,7 +303,7 @@ const UsersPage: React.FC = () => {
       <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Delete User" size="sm">
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-400">
-            Are you sure you want to delete <strong>{selectedUser?.name}</strong>? This action cannot be undone.
+            Are you sure you want to delete <strong>{[selectedUser?.firstName, selectedUser?.lastName].filter(Boolean).join(' ') || selectedUser?.email}</strong>? This action cannot be undone.
           </p>
 
           <div className="flex justify-end gap-3 pt-4">

@@ -88,12 +88,13 @@ export const authApi = {
         password,
       });
 
-      // Auth service returns: { token, user: { id, email, firstName, lastName, name, roles, isEmailVerified, isActive, createdAt } }
+      // Auth service returns: { token, user: { id, email, firstName, lastName, roles, isEmailVerified, isActive, createdAt } }
       if (response.data.token && response.data.user) {
         const backendUser = response.data.user;
         const frontendUser = {
           id: backendUser._id || backendUser.id,
-          name: backendUser.name || backendUser.email?.split('@')[0] || 'User',
+          firstName: backendUser.firstName,
+          lastName: backendUser.lastName,
           email: backendUser.email,
           role: (backendUser.roles?.includes('admin') ? 'admin' : 'customer') as 'customer' | 'admin',
           roles: backendUser.roles || [],

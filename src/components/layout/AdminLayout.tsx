@@ -58,17 +58,11 @@ const AdminLayout: React.FC = () => {
     }
   };
 
-  // Get user display name (support both formats for backward compatibility)
+  // Get user display name from firstName and lastName
   const getUserName = () => {
     if (!user) return 'User';
-    if (user.name) return user.name;
-    // Fallback: construct from firstName and lastName if available
-    const userAny = user as any;
-    if (userAny.firstName && userAny.lastName) {
-      return `${userAny.firstName} ${userAny.lastName}`;
-    }
-    if (userAny.firstName) return userAny.firstName;
-    return user.email?.split('@')[0] || 'User';
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ');
+    return fullName || user.email?.split('@')[0] || 'User';
   };
 
   const displayName = getUserName();

@@ -80,7 +80,8 @@ const UserDetailPage: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | undefined) => {
+    if (!status) return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     const statusMap: Record<string, string> = {
       active: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
       inactive: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400',
@@ -89,12 +90,16 @@ const UserDetailPage: React.FC = () => {
     return statusMap[status.toLowerCase()] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string | undefined) => {
+    if (!status) return <ClockIcon className="h-5 w-5 text-gray-500" />;
     const s = status.toLowerCase();
     if (s === 'active') return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
     if (s === 'suspended') return <XCircleIcon className="h-5 w-5 text-red-500" />;
     return <ClockIcon className="h-5 w-5 text-gray-500" />;
   };
+
+  // Derive status from isActive if status is not provided
+  const userStatus = user.status || (user.isActive !== false ? 'active' : 'inactive');
 
   return (
     <div className="space-y-6">
@@ -110,16 +115,20 @@ const UserDetailPage: React.FC = () => {
           </button>
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">{user.name.charAt(0).toUpperCase()}</span>
+              <span className="text-white font-bold text-2xl">
+                {(user.firstName || user.email)?.charAt(0).toUpperCase()}
+              </span>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{user.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.email}
+              </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
             </div>
           </div>
         </div>
-        <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(user.status)}`}>
-          {user.status}
+        <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(userStatus)}`}>
+          {userStatus}
         </span>
       </div>
 
@@ -135,7 +144,9 @@ const UserDetailPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-xs text-gray-500 dark:text-gray-400">Full Name</label>
-                <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">{user.name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                  {[user.firstName, user.lastName].filter(Boolean).join(' ') || 'N/A'}
+                </p>
               </div>
               <div>
                 <label className="text-xs text-gray-500 dark:text-gray-400">User ID</label>
@@ -199,10 +210,10 @@ const UserDetailPage: React.FC = () => {
 
               <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                 <div className="flex items-center space-x-3">
-                  {getStatusIcon(user.status)}
+                  {getStatusIcon(userStatus)}
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Account Status</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">{user.status}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">{userStatus}</p>
                   </div>
                 </div>
               </div>
@@ -242,7 +253,7 @@ const UserDetailPage: React.FC = () => {
               <button onClick={() => navigate(`/users/edit/${id}`)} className="w-full btn-primary text-sm">
                 Edit User
               </button>
-              {user.status === 'active' ? (
+              {userStatus === 'active' ? (
                 <button
                   onClick={() => handleStatusUpdate('suspended')}
                   className="w-full btn-secondary text-sm"

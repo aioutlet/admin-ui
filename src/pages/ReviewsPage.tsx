@@ -51,7 +51,8 @@ const ReviewsPage: React.FC = () => {
         (review) =>
           review.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          review.user?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          review.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          review.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -331,7 +332,9 @@ const ReviewsPage: React.FC = () => {
                   <TableCell>
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white">
-                        {review.user?.name || 'Unknown User'}
+                        {[review.user?.firstName, review.user?.lastName].filter(Boolean).join(' ') || 
+                         review.user?.email || 
+                         'Unknown User'}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         {review.product?.name || 'Product'}
@@ -404,7 +407,9 @@ const ReviewsPage: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">User</label>
-              <p className="text-gray-900 dark:text-white">{selectedReview.user?.name}</p>
+              <p className="text-gray-900 dark:text-white">
+                {[selectedReview.user?.firstName, selectedReview.user?.lastName].filter(Boolean).join(' ') || selectedReview.user?.email}
+              </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{selectedReview.user?.email}</p>
             </div>
 
@@ -488,7 +493,7 @@ const ReviewsPage: React.FC = () => {
       <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Delete Review" size="sm">
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-400">
-            Are you sure you want to delete this review from <strong>{selectedReview?.user?.name}</strong>? This action
+            Are you sure you want to delete this review from <strong>{[selectedReview?.user?.firstName, selectedReview?.user?.lastName].filter(Boolean).join(' ') || selectedReview?.user?.email}</strong>? This action
             cannot be undone.
           </p>
 

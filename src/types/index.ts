@@ -1,16 +1,23 @@
 // Core admin types
 export interface User {
   id: string;
-  name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
+  phoneNumber?: string;
   role: 'customer' | 'admin'; // Primary role for backward compatibility
   roles: ('customer' | 'admin')[]; // All roles
   status: 'active' | 'inactive' | 'suspended';
+  isActive?: boolean;
   createdAt: string;
+  updatedAt?: string;
   lastLogin?: string;
   profileImage?: string;
   phone?: string;
   address?: string;
+  addresses?: any[];
+  paymentMethods?: any[];
+  wishlist?: any[];
 }
 
 export interface Product {

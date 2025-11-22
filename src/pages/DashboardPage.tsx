@@ -189,10 +189,14 @@ const DashboardPage: React.FC = () => {
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium text-xs">{user.name.charAt(0).toUpperCase()}</span>
+                    <span className="text-white font-medium text-xs">
+                      {(user.firstName || user.email)?.charAt(0).toUpperCase()}
+                    </span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.email}
+                    </p>
                     <p className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">{user.email}</p>
                   </div>
                 </div>
