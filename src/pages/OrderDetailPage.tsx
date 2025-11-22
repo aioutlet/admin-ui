@@ -113,7 +113,7 @@ const OrderDetailPage: React.FC = () => {
             <ArrowLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Order #{order.id}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{order.orderNumber}</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Placed on {new Date(order.createdAt).toLocaleDateString()} at{' '}
               {new Date(order.createdAt).toLocaleTimeString()}
@@ -139,8 +139,20 @@ const OrderDetailPage: React.FC = () => {
                     className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg"
                   >
                     <div className="flex items-center space-x-4 flex-1">
-                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">No Image</span>
+                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                        {item.productImageUrl ? (
+                          <img 
+                            src={item.productImageUrl} 
+                            alt={item.productName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.parentElement!.innerHTML = '<span class="text-xs text-gray-500 dark:text-gray-400">No Image</span>';
+                            }}
+                          />
+                        ) : (
+                          <span className="text-xs text-gray-500 dark:text-gray-400">No Image</span>
+                        )}
                       </div>
                       <div className="flex-1">
                         <h3 className="text-sm font-medium text-gray-900 dark:text-white">{item.productName}</h3>
@@ -189,48 +201,50 @@ const OrderDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Customer Information */}
-          <div className="card p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <UserIcon className="h-5 w-5 mr-2" />
-              Customer Information
-            </h2>
-            <div className="space-y-3">
-              {order.customerName && (
+          {/* Customer Information & Addresses */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Customer Information */}
+            <div className="card p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <UserIcon className="h-5 w-5 mr-2" />
+                Customer Information
+              </h2>
+              <div className="space-y-3">
+                {order.customerName && (
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{order.customerName}</p>
+                  </div>
+                )}
+                {order.customerEmail && (
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      <a href={`mailto:${order.customerEmail}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                        {order.customerEmail}
+                      </a>
+                    </p>
+                  </div>
+                )}
+                {order.customerPhone && (
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      <a href={`tel:${order.customerPhone}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                        {order.customerPhone}
+                      </a>
+                    </p>
+                  </div>
+                )}
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{order.customerName}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Customer ID</p>
+                  <p className="text-sm font-mono text-xs text-gray-600 dark:text-gray-400 break-all">{order.customerId}</p>
                 </div>
-              )}
-              {order.customerEmail && (
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    <a href={`mailto:${order.customerEmail}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                      {order.customerEmail}
-                    </a>
-                  </p>
-                </div>
-              )}
-              {order.customerPhone && (
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    <a href={`tel:${order.customerPhone}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                      {order.customerPhone}
-                    </a>
-                  </p>
-                </div>
-              )}
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Customer ID</p>
-                <p className="text-sm font-mono text-xs text-gray-600 dark:text-gray-400">{order.customerId}</p>
               </div>
             </div>
-          </div>
 
-          {/* Shipping & Billing Addresses */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Shipping & Billing Addresses - now in same row */}
+          <div className="space-y-6">
             {/* Shipping Address */}
             <div className="card p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -270,6 +284,7 @@ const OrderDetailPage: React.FC = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400">No billing address provided</p>
               )}
             </div>
+          </div>
           </div>
         </div>
 
