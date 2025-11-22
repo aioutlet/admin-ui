@@ -24,49 +24,19 @@ const DashboardPage: React.FC = () => {
     refetchOnMount: false, // Don't refetch on component remount (StrictMode causes double-mount)
   });
 
-  // Mock data for demonstration when API is not available
-  const mockStats = {
-    users: { total: 1247, active: 1189, newThisMonth: 89, growth: 12.5 },
-    orders: { total: 3421, pending: 23, processing: 45, completed: 3353, revenue: 125430, growth: 8.3 },
-    products: { total: 567, active: 543, lowStock: 12, outOfStock: 3 },
-    reviews: { total: 2156, pending: 34, averageRating: 4.2, growth: 15.2 },
+  // Extract stats, recentOrders, and recentUsers from the unified response
+  const stats = dashboardData?.data || {
+    users: { total: 0, active: 0, newThisMonth: 0, growth: 0 },
+    orders: { total: 0, pending: 0, processing: 0, completed: 0, revenue: 0, growth: 0 },
+    products: { total: 0, active: 0, lowStock: 0, outOfStock: 0 },
+    reviews: { total: 0, pending: 0, averageRating: 0, growth: 0 },
+    recentOrders: [],
+    recentUsers: [],
   };
 
-  const mockRecentOrders = [
-    { id: '1', customer: 'John Doe', total: 129.99, status: 'processing', createdAt: new Date().toISOString() },
-    { id: '2', customer: 'Jane Smith', total: 89.99, status: 'shipped', createdAt: new Date().toISOString() },
-    { id: '3', customer: 'Bob Johnson', total: 199.99, status: 'pending', createdAt: new Date().toISOString() },
-  ];
-
-  const mockRecentUsers = [
-    { id: '1', name: 'Alice Brown', email: 'alice@example.com', role: 'customer', createdAt: new Date().toISOString() },
-    {
-      id: '2',
-      name: 'Charlie Wilson',
-      email: 'charlie@example.com',
-      role: 'customer',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      name: 'David Miller',
-      email: 'david@example.com',
-      role: 'customer',
-      createdAt: new Date().toISOString(),
-    },
-  ];
-
-  // Extract stats, recentOrders, and recentUsers from the unified response
-  const stats = dashboardData?.data;
-
-  // Check if we have real data (at least one stat > 0) or should use mocks
-  const hasRealData =
-    stats &&
-    (stats.users?.total > 0 || stats.orders?.total > 0 || stats.products?.total > 0 || stats.reviews?.total > 0);
-
-  const displayStats = hasRealData ? stats : mockStats;
-  const displayOrders = hasRealData && stats?.recentOrders?.length > 0 ? stats.recentOrders : mockRecentOrders;
-  const displayUsers = hasRealData && stats?.recentUsers?.length > 0 ? stats.recentUsers : mockRecentUsers;
+  const displayStats = stats;
+  const displayOrders = stats?.recentOrders || [];
+  const displayUsers = stats?.recentUsers || [];
 
   if (statsLoading && !dashboardData) {
     return (
