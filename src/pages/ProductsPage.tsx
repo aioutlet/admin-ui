@@ -86,7 +86,7 @@ const ProductsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await productsApi.getAll({ limit: 100 }); // Fetch all products
+      const response = await productsApi.getAll({}); // Fetch all products (no limit)
 
       console.log('Products API response:', response);
 
