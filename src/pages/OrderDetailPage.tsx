@@ -196,16 +196,36 @@ const OrderDetailPage: React.FC = () => {
               Customer Information
             </h2>
             <div className="space-y-3">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Customer ID</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{order.customerId}</p>
-              </div>
               {order.customerName && (
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{order.customerName}</p>
                 </div>
               )}
+              {order.customerEmail && (
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    <a href={`mailto:${order.customerEmail}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                      {order.customerEmail}
+                    </a>
+                  </p>
+                </div>
+              )}
+              {order.customerPhone && (
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    <a href={`tel:${order.customerPhone}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                      {order.customerPhone}
+                    </a>
+                  </p>
+                </div>
+              )}
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Customer ID</p>
+                <p className="text-sm font-mono text-xs text-gray-600 dark:text-gray-400">{order.customerId}</p>
+              </div>
             </div>
           </div>
 

@@ -173,8 +173,10 @@ const DashboardPage: React.FC = () => {
                 className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{order.customer}</p>
-                  <p className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Order #{order.id}</p>
+                  <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">{order.orderNumber}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {order.customer} • {order.itemCount || 0} items
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">${order.total}</p>
